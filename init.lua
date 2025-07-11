@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -973,6 +973,45 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      bigfile = { enabled = true },
+      dashboard = { enabled = true },
+      indent = { enabled = true },
+      input = { enabled = true },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      scope = { enabled = true },
+    },
+  },
+
+  { 'Xuyuanp/scrollbar.nvim' },
+  {
+    'akinsho/bufferline.nvim',
+    dependencies = { 'nvim-tree/nvim-tree.lua' },
+    config = function()
+      require('bufferline').setup {}
+    end,
+  },
+  { 'gelguy/wilder.nvim' },
+  {
+    'nvim-tree/nvim-tree.lua',
+    config = function()
+      require('nvim-tree').setup {}
+    end,
+  },
+  -- {
+  --   'startup-nvim/startup.nvim',
+  --   dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope-file-browser.nvim' },
+  --   event = 'VimEnter',
+  --   config = function()
+  --     require('startup').setup()
+  --   end,
+  -- },
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
@@ -1012,5 +1051,42 @@ require('lazy').setup({
   },
 })
 
+function ToggleNvimTreeInCurrentFileDir()
+  local file_dir = vim.fn.expand '%:p:h'
+  local api = require 'nvim-tree.api'
+  api.tree.toggle {
+    path = file_dir,
+    find_file = true,
+    width = 100,
+  }
+end
+--
+vim.keymap.set('n', '<leader>e', ':lua ToggleNvimTreeInCurrentFileDir() <CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>bb', ':BufferLineCyclePrev<CR>')
+vim.keymap.set('n', '<leader>bn', ':BufferLineCycleNext<CR>')
+vim.keymap.set('n', '<leader>bj', ':BufferLinePick<CR>')
+vim.keymap.set('n', '<leader>bl', ':BufferLineCloseRight<CR>')
+vim.keymap.set('n', '<leader>bh', ':BufferLineCloseLeft<CR>')
+vim.keymap.set('n', '<leader>bq', ':BufferLinePickClose<CR>')
+vim.keymap.set('n', '<leader>bq', ':BufferLinePickClose<CR>')
+vim.keymap.set('n', '<leader>vs', ':vsplit<CR>')
+-- vim.opt.background = 'light'
+vim.api.nvim_create_autocmd({ 'WinScrolled', 'VimResized', 'QuitPre', 'WinEnter', 'FocusGained' }, {
+  pattern = '*',
+  callback = function()
+    require('scrollbar').show()
+  end,
+})
+vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave', 'BufWinLeave', 'FocusLost' }, {
+  pattern = '*',
+  callback = function()
+    require('scrollbar').clear()
+  end,
+})
+vim.diagnostic.config {
+  virtual_text = true,
+  signs = true,
+  update_in_insert = false,
+}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
