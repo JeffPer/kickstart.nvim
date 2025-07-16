@@ -980,7 +980,7 @@ require('lazy').setup({
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
-      dashboard = { enabled = true },
+      dashboard = { enabled = false },
       indent = { enabled = true },
       input = { enabled = true },
       notifier = { enabled = true },
@@ -1088,5 +1088,14 @@ vim.diagnostic.config {
   signs = true,
   update_in_insert = false,
 }
+-- This script turns off all LSPs
+if vim.env.no_lsp_mode == 'true' then
+  vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(args)
+      vim.lsp.stop_client(args.data.client_id)
+    end,
+  })
+end
+vim.g.startup_disable_on_startup = true
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
