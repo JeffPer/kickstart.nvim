@@ -980,7 +980,7 @@ require('lazy').setup({
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
-      dashboard = { enabled = false },
+      dashboard = { enabled = true },
       indent = { enabled = true },
       input = { enabled = true },
       notifier = { enabled = true },
@@ -1102,7 +1102,9 @@ if vim.env.no_lsp_mode == 'true' then
     end,
   })
 end
-vim.g.startup_disable_on_startup = true
+
+-- vim.g.startup_disable_on_startup = true
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 --
 require('toggleterm').setup {
