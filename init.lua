@@ -989,6 +989,12 @@ require('lazy').setup({
     },
   },
 
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = true,
+  },
+
   { 'Xuyuanp/scrollbar.nvim' },
   {
     'akinsho/bufferline.nvim',
@@ -1088,5 +1094,28 @@ vim.diagnostic.config {
   signs = true,
   update_in_insert = false,
 }
--- The line beneath this is called `modeline`. See `:help modeline`
+--
+require('toggleterm').setup {
+  direction = 'horizontal',
+  size = 15,
+}
+
+vim.keymap.set('n', '<leader>t', '<Cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
+
+vim.keymap.set('n', '<leader>r', function()
+  local file = vim.fn.expand '%'
+  local ext = vim.fn.expand '%:e'
+  local cmd = ''
+
+  if ext == 'py' then
+    cmd = 'python3 ' .. file
+  elseif ext == 'sh' then
+    cmd = 'bash ' .. file
+  else
+    cmd = './' .. file
+  end
+
+  require('toggleterm').exec(cmd, 1, 12, 'horizontal')
+end, { desc = 'Run current file in toggleterm' })
+
 -- vim: ts=2 sts=2 sw=2 et
